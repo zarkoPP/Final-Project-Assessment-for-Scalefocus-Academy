@@ -53,15 +53,15 @@ pipeline {
             sleep time: 30, unit: 'SECONDS'
             echo "Wait complete."
 
-            def podReady = sh(
-              returnStdout: true,
+            def podReady = bat(
+              returnStatus: true,
               script: 'kubectl get pod -l app.kubernetes.io/name=wordpress -n wp -o jsonpath="{.items[0].status.conditions[?(@.type==\'Ready\')].status}"'
-            ).trim()
+            )
 
-            if (podReady == 'True') {
+            if (podReady == 0) {
               echo "WordPress pod is ready"
               echo "Forwarding port to the WordPress service..."
-              bat "kubectl port-forward --namespace wp svc/final-project-wp-scalefocus-wordpress 8089:80"
+              bat 'kubectl port-forward --namespace wp svc/final-project-wp-scalefocus-wordpress 8089:80'
             } else {
               error "WordPress pod is not ready"
             }
