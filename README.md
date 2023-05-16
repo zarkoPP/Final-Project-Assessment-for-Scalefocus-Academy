@@ -24,7 +24,7 @@
 
 ### We have build success:
 ![Screenshot_2](https://github.com/zarkoPP/Final-Project-Assessment-for-Scalefocus-Academy/assets/83474116/1906462d-6749-4022-8312-41e141bff42c)
-### Check if the pods state:
+### Check the pods state:
 ![Screenshot_6](https://github.com/zarkoPP/Final-Project-Assessment-for-Scalefocus-Academy/assets/83474116/2cd5aff9-eb9b-45a2-8a2b-a313dedb366a)
 ### After the build succeded we gonna have to forward the port from the host to the pod:
 ![Screenshot_4](https://github.com/zarkoPP/Final-Project-Assessment-for-Scalefocus-Academy/assets/83474116/91ca3e5d-d825-4b38-8a8d-7df814223e84)
