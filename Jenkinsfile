@@ -27,6 +27,7 @@ pipeline {
       steps {
         script {
           try {
+            bat 'helm dependency build bitnami/wordpress'
             def chartExists = bat(
               returnStatus: true,
               script: 'helm list -q wp --namespace wp'
