@@ -49,7 +49,7 @@ pipeline {
       steps {
         script {
           try {
-            def podName = bat(
+            def podName = sh(
               returnStdout: true,
               script: 'kubectl get pod -l app.kubernetes.io/name=wordpress -n wp -o jsonpath="{.items[0].metadata.name}"'
             ).trim()
