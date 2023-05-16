@@ -45,31 +45,40 @@ pipeline {
       }
     }
 
-    stage('Waiting for port ready and port forwarding') {
-      steps {
-        script {
-          try {
-            echo "Waiting for 30 seconds..."
-            sleep time: 30, unit: 'SECONDS'
-            echo "Wait complete."
-
-            def podReady = bat(
-              returnStatus: true,
-              script: 'kubectl get pod -l app.kubernetes.io/name=wordpress -n wp -o jsonpath="{.items[0].status.conditions[?(@.type==\'Ready\')].status}"'
-            )
-
-            if (podReady == 0) {
-              echo "WordPress pod is ready"
-              echo "Forwarding port to the WordPress service..."
-              bat 'kubectl port-forward --namespace wp svc/final-project-wp-scalefocus-wordpress 8089:80'
-            } else {
-              error "WordPress pod is not ready"
-            }
-          } catch (Exception e) {
-            error "Error checking WordPress pod status: ${e.getMessage()}"
-          }
+   stage('Wait for Pod Ready') {
+  steps {
+    script {
+      try {
+        def podName = sh(
+          returnStdout: true,
+          script: 'kubectl get pod -l app.kubernetes.io/name=wordpress -n wp -o jsonpath="{.items[0].metadata.name}"'
+        ).trim()
+        
+        if (!podName.empty) {
+          echo "WordPress pod is ready: $podName"
+          
+          def portForwardCommand = "kubectl port-forward -n wp pod/$podName 8090:80"
+          
+          bat portForwardCommand
+        } else {
+          error "WordPress pod is not ready"
         }
+      } catch (Exception e) {
+        error "Error checking WordPress pod status: ${e.getMessage()}"
       }
     }
   }
 }
+
+stage('Port Forward') {
+  steps {
+    script {
+      try {
+        bat "kubectl port-forward -n wp pod/$podName 8090:80"
+      } catch (Exception e) {
+        error "Error port forwarding: ${e.getMessage()}"
+      }
+    }
+  }
+}
+
