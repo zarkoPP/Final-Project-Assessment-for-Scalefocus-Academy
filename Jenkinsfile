@@ -45,7 +45,7 @@ pipeline {
       }
     }
 
-    stage('Wait for Pod Ready') {
+   /* stage('Wait for Pod Ready') {
       steps {
         script {
           try {
@@ -80,6 +80,6 @@ pipeline {
           }
         }
       }
-    }
+    }*/
   }
 }
