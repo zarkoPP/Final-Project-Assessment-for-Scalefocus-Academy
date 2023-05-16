@@ -49,7 +49,7 @@ pipeline {
       steps {
         script {
           try {
-            def podName = sh(
+            def podName = bat(
               returnStdout: true,
               script: 'kubectl get pod -l app.kubernetes.io/name=wordpress -n wp -o jsonpath="{.items[0].metadata.name}"'
             ).trim()
@@ -57,7 +57,7 @@ pipeline {
             if (!podName.empty) {
               echo "WordPress pod is ready: $podName"
               
-              def portForwardCommand = "kubectl port-forward -n wp pod/$podName 8090:80"
+              def portForwardCommand = "kubectl port-forward -n wp pod/$podName 8091:80"
               
               bat portForwardCommand
             } else {
@@ -74,7 +74,7 @@ pipeline {
       steps {
         script {
           try {
-            bat "kubectl port-forward -n wp pod/$podName 8090:80"
+            bat "kubectl port-forward -n wp pod/$podName 8091:80"
           } catch (Exception e) {
             error "Error port forwarding: ${e.getMessage()}"
           }
