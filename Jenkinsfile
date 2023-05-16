@@ -6,12 +6,15 @@ pipeline {
       steps {
         script {
           try {
-            def nsExists = bat(returnStdout: true, script: 'kubectl get namespace wp')
-            if (nsExists.contains('NotFound')) {
-              echo "Creating namespace wp"
-              bat 'kubectl create namespace wp'
-            } else {
+            def nsExists = sh(
+              returnStatus: true,
+              script: 'kubectl get namespace wp'
+            )
+            if (nsExists == 0) {
               echo "Namespace wp already exists"
+            } else {
+              echo "Creating namespace wp"
+              sh 'kubectl apply -f wp-namespace.yaml'
             }
           } catch (Exception e) {
             echo "Error checking/creating namespace wp: ${e.getMessage()}"
@@ -24,12 +27,15 @@ pipeline {
       steps {
         script {
           try {
-            def chartExists = bat(returnStdout: true, script: 'helm list -q wp --namespace wp')
-            if (chartExists) {
+            def releaseExists = sh(
+              returnStatus: true,
+              script: "helm list -q --namespace wp"
+            )
+            if (releaseExists == 0) {
               echo "Chart wp already exists"
             } else {
               echo "Installing chart wp"
-              bat 'helm install wp bitnami/wordpress --namespace wp -f values.yaml --set service.type=ClusterIP'
+              sh "helm install wp bitnami/wordpress --namespace wp -f bitnami/wordpress/values.yaml --set service.type=ClusterIP"
             }
           } catch (Exception e) {
             echo "Error installing Helm chart: ${e.getMessage()}"
