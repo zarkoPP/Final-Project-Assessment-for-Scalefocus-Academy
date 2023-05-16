@@ -18,3 +18,4 @@
 # Repository Structure:
 
 # Additional Information
+### Corrected the type: LoadBalancer to type: ClusterIP
